@@ -52,16 +52,19 @@ class App(CTk):
             definitions.grid(row=1, column=1, padx=50, pady=20)
             definitions.configure(state='disabled')
             def hear():
-                phcs = json[0]['phonetics']
-                for phonetic, i in enumerate(phcs):
-                    audio_link = phcs[phonetic]['audio']
-                    if audio_link == '': continue
-                    else: break
-                r = requests.get(audio_link)
-                with open(f'{json[0]["word"]}.mp3', 'wb') as f:
-                    f.write(r.content)
-                playsound.playsound(f'{Path().cwd() / f"""{json[0]["word"]}.mp3"""}')
-                os.remove(f'{json[0]["word"]}.mp3')
+                try:
+                    phcs = json[0]['phonetics']
+                    for phonetic, i in enumerate(phcs):
+                        audio_link = phcs[phonetic]['audio']
+                        if audio_link == '': continue
+                        else: break
+                    r = requests.get(audio_link)
+                    with open(f'{json[0]["word"]}.mp3', 'wb') as f:
+                        f.write(r.content)
+                    playsound.playsound(f'{Path().cwd() / f"""{json[0]["word"]}.mp3"""}')
+                    os.remove(f'{json[0]["word"]}.mp3')
+                except requests.exceptions.MissingSchema:
+                    showerror('Word has no audio', 'The API did not provide audio for this word.')
             hear_btn = CTkButton(self, width=50, height=30, text='Listen', command=hear, font=('Segoe UI', 16, 'bold'))
             hear_btn.grid(row=0, column=2, pady=20)
         except KeyError:
