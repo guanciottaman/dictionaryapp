@@ -64,27 +64,9 @@ class App(CTk):
                 definitions.insert('end', '\n -------------- \n')
             definitions.grid(row=1, column=1, padx=20, pady=20)
             definitions.configure(state='disabled')
-            def hear():
-                """Play word phonetics"""
-                try:
-                    phcs = json[0]['phonetics']
-                    for i in range(len(phcs)):
-                        audio_link = phcs[i]['audio']
-                        if audio_link == '':
-                            continue
-                        break
-                    audio_response = requests.get(audio_link, timeout=10)
-                    with open(f'{json[0]["word"]}.mp3', 'wb') as file_:
-                        file_.write(audio_response.content)
-                    playsound.playsound(f'{Path().cwd() / f"""{json[0]["word"]}.mp3"""}',
-                                        block=False)
-                    os.remove(f'{json[0]["word"]}.mp3')
-                except requests.exceptions.MissingSchema:
-                    showerror('Word has no audio', 'The API did not provide audio for this word.')
-                except playsound.PlaysoundException:
-                    os.system(f'{"main.exe" if "main.exe" in os.listdir() else "python main.py"}')
-                    sys.exit(0)
-            hear_btn = CTkButton(self, width=50, height=30, text='Listen', command=hear,
+
+            hear_btn = CTkButton(self, width=50, height=30, text='Listen',
+                                 command=lambda: self.hear(json),
                                  font=('Segoe UI', 16, 'bold'))
             hear_btn.grid(row=0, column=2, pady=20, sticky='e')
             show_api_response = CTkButton(self, width=100, height=30, text='Show API response',
@@ -93,6 +75,27 @@ class App(CTk):
             show_api_response.grid(row=2, column=0, padx=20, pady=20)
         except KeyError:
             showerror('Word not found', 'The word was not found correctly. \nPlease try again.')
+
+    def hear(self, json):
+        """Play word phonetics"""
+        try:
+            phcs = json[0]['phonetics']
+            for i in range(len(phcs)):
+                audio_link = phcs[i]['audio']
+                if audio_link == '':
+                    continue
+                break
+            audio_response = requests.get(audio_link, timeout=10)
+            with open(f'{json[0]["word"]}.mp3', 'wb') as file_:
+                file_.write(audio_response.content)
+            playsound.playsound(f'{Path().cwd() / f"""{json[0]["word"]}.mp3"""}',
+                                block=False)
+            os.remove(f'{json[0]["word"]}.mp3')
+        except requests.exceptions.MissingSchema:
+            showerror('Word has no audio', 'The API did not provide audio for this word.')
+        except playsound.PlaysoundException:
+            os.system(f'{"main.exe" if "main.exe" in os.listdir() else "python main.py"}')
+            sys.exit(0)
 
 
 if __name__ == '__main__':
