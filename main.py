@@ -16,9 +16,11 @@ class App(CTk):
     def __init__(self):
         super().__init__()
         self.title('Dictionary App')
-        self.geometry('650x680')
         set_appearance_mode('dark')
         set_default_color_theme('green')
+        self.geometry('650x680+550+100')
+        self.resizable(False, False)
+        self.iconbitmap('dict.ico')
         self.entry = CTkEntry(self, width=150, height=30, placeholder_text='Enter a word...',
                               font=('Segoe UI', 18, 'bold'))
         self.entry.grid(row=0, column=0, padx=50, pady=50)
@@ -27,6 +29,8 @@ class App(CTk):
         self.enter.grid(row=0, column=1, padx=20, pady=50)
 
     def search_word(self):
+        if self.entry.get() == '':
+            return
         """Search for a word in FreeDictionaryAPI"""
         try:
             # URL for API request
