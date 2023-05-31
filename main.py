@@ -4,6 +4,7 @@ import sys
 from pathlib import Path
 import webbrowser
 from tkinter.messagebox import showerror
+import threading
 
 import requests
 from customtkinter import (CTk, set_appearance_mode, set_default_color_theme,
@@ -25,8 +26,11 @@ class App(CTk):
                               font=('Segoe UI', 18, 'bold'))
         self.entry.grid(row=0, column=0, padx=50, pady=50)
         self.enter = CTkButton(self, width=130, height=30, text='Search',
-                               font=('Segoe UI', 18, 'bold'), command=self.search_word)
+                               font=('Segoe UI', 18, 'bold'), command=self.start_thread)
         self.enter.grid(row=0, column=1, padx=20, pady=50)
+
+    def start_thread(self):
+        threading.Thread(target=self.search_word).start()
 
     def search_word(self):
         if self.entry.get() == '':
