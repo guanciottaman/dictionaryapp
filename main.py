@@ -41,40 +41,8 @@ class App(CTk):
             url = f'https://api.dictionaryapi.dev/api/v2/entries/en/{self.entry.get()}'
             response = requests.get(url, timeout=10)
             json = response.json()
-            synonyms_textbox = CTkTextbox(self, height=400,
-                                          font=('Segoe UI', 16),
-                                          scrollbar_button_color='darkgreen',
-                                          scrollbar_button_hover_color='black')
-            synonyms_textbox.insert('end', 'Synonyms: \n\n')
-            for meaning in json[0]['meanings']:
-                synonyms_textbox.insert('end', f'As {meaning["partOfSpeech"]}:\n')
-                synonyms = []
-                for syn in meaning["synonyms"]:
-                    if not meaning["synonyms"]:
-                        synonyms.append('None')
-                    else:
-                        synonyms.append(syn)
-                # if lenght is greater or equal than 5 make synonyms go in newlines
-                if len(synonyms) >= 5:
-                    synonyms_text = '\n'.join(synon for synon in synonyms)
-                else:
-                    synonyms_text = ', '.join(synonyms)
-                synonyms_textbox.insert('end', f'{synonyms_text}\n -------------- \n')
-            synonyms_textbox.grid(row=1, column=0, padx=20, pady=20)
-            synonyms_textbox.configure(state='disabled')
-            definitions = CTkTextbox(self, width=260, height=400,
-                                     font=('Segoe UI', 16),
-                                     scrollbar_button_color='darkgreen',
-                                     scrollbar_button_hover_color='black')
-            definitions.insert('end', 'Definitions: \n\n')
-            for defin in json[0]['meanings']:
-                definitions.insert('end', f'As {defin["partOfSpeech"]}:\n')
-                for definit in defin['definitions']:
-                    definitions.insert('end', f'{definit["definition"]}')
-                definitions.insert('end', '\n -------------- \n') # spacing
-            definitions.grid(row=1, column=1, padx=20, pady=20)
-            definitions.configure(state='disabled')
-
+            self.create_synonyms(json)
+            self.create_definitions(json)
             hear_btn = CTkButton(self, width=50, height=30, text='Listen',
                                  command=lambda: self.hear(json),
                                  font=('Segoe UI', 16, 'bold'))
@@ -85,6 +53,44 @@ class App(CTk):
             show_api_response.grid(row=2, column=0, padx=20, pady=20)
         except KeyError:
             showerror('Word not found', 'The word was not found correctly. \nPlease try again.')
+
+    def create_synonyms(self, json):
+        synonyms_textbox = CTkTextbox(self, height=400,
+                                          font=('Segoe UI', 16),
+                                          scrollbar_button_color='darkgreen',
+                                          scrollbar_button_hover_color='black')
+        synonyms_textbox.insert('end', 'Synonyms: \n\n')
+        for meaning in json[0]['meanings']:
+            synonyms_textbox.insert('end', f'As {meaning["partOfSpeech"]}:\n')
+            synonyms = []
+            for syn in meaning["synonyms"]:
+                if not meaning["synonyms"]:
+                    synonyms.append('None')
+                else:
+                    synonyms.append(syn)
+            # if lenght is greater or equal than 5 make synonyms go in newlines
+            if len(synonyms) >= 5:
+                synonyms_text = '\n'.join(synon for synon in synonyms)
+            else:
+                synonyms_text = ', '.join(synonyms)
+            synonyms_textbox.insert('end', f'{synonyms_text}\n -------------- \n')
+        synonyms_textbox.grid(row=1, column=0, padx=20, pady=20)
+        synonyms_textbox.configure(state='disabled')
+
+    def create_definitions(self, json):
+        definitions = CTkTextbox(self, width=260, height=400,
+                                     font=('Segoe UI', 16),
+                                     scrollbar_button_color='darkgreen',
+                                     scrollbar_button_hover_color='black')
+        definitions.insert('end', 'Definitions: \n\n')
+        for defin in json[0]['meanings']:
+            definitions.insert('end', f'As {defin["partOfSpeech"]}:\n')
+            for definit in defin['definitions']:
+                definitions.insert('end', f'{definit["definition"]}')
+            definitions.insert('end', '\n -------------- \n') # spacing
+        definitions.grid(row=1, column=1, padx=20, pady=20)
+        definitions.configure(state='disabled')
+
 
     def hear(self, json):
         """Play word phonetics"""
