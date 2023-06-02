@@ -5,7 +5,6 @@ from pathlib import Path
 import webbrowser
 from tkinter.messagebox import showerror
 import threading
-import json as j
 
 import requests
 from customtkinter import (CTk, set_appearance_mode, set_default_color_theme, get_appearance_mode,
@@ -27,10 +26,11 @@ class App(CTk):
         self.entry = CTkEntry(self, width=150, height=30, placeholder_text='Enter a word...',
                               font=('Segoe UI', 18, 'bold'))
         self.entry.grid(row=0, column=0, padx=50, pady=50)
-        self.enter = CTkButton(self, width=130, height=30, text='Search', fg_color=('lightgreen', '#2CC985'),
+        self.enter = CTkButton(self, width=130, height=30, text='Search',
+                               fg_color=('lightgreen', '#2CC985'),
                                font=('Segoe UI', 18, 'bold'), command=self.start_thread)
         self.enter.grid(row=0, column=1, padx=20, pady=50)
-        self.icon = CTkImage(light_image=Image.open('assets\\darkicon.png'), 
+        self.icon = CTkImage(light_image=Image.open('assets\\darkicon.png'),
                              dark_image=Image.open('assets\\lighticon.png'))
         self.change_app_mode = CTkButton(self, width=60, height=30, text='',
                                          image=self.icon,
@@ -45,19 +45,20 @@ class App(CTk):
             set_appearance_mode('light')
 
     def start_thread(self):
-        t = threading.Thread(target=self.search_word)
-        t.start()
+        """Start word search thread"""
+        thread = threading.Thread(target=self.search_word)
+        thread.start()
         img = CTkImage(Image.open('assets\\spin.gif'))
         loading = CTkLabel(self, width=40, height=40, text='', font=('Segoe UI', 16), image=img)
         loading.grid(row=1, column=0, padx=40, pady=30)
-        while t.is_alive():
+        while thread.is_alive():
             self.update()
         loading.destroy()
 
     def search_word(self):
+        """Search for a word in FreeDictionaryAPI"""
         if self.entry.get() == '':
             return
-        """Search for a word in FreeDictionaryAPI"""
         try:
             # URL for API request
             word = self.entry.get()
@@ -84,6 +85,7 @@ class App(CTk):
             showerror('Connection timed out')
 
     def create_synonyms(self, json):
+        """Creates a list of synonyms"""
         synonyms_textbox = CTkTextbox(self, height=400,
                                           font=('Segoe UI', 16),
                                           scrollbar_button_color=('lightgreen', 'darkgreen'),
@@ -108,6 +110,7 @@ class App(CTk):
         synonyms_textbox.configure(state='disabled')
 
     def create_definitions(self, json):
+        """Create definitions"""
         definitions = CTkTextbox(self, width=260, height=400,
                                      font=('Segoe UI', 16),
                                      scrollbar_button_color=('lightgreen', 'darkgreen'),
@@ -145,6 +148,7 @@ class App(CTk):
             sys.exit(0)
 
     def start_audio_thread(self, json):
+        """Start audio thread"""
         threading.Thread(target=self.hear, args=(json, )).start()
 
 
