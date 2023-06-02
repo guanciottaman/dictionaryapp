@@ -48,7 +48,7 @@ class App(CTk):
         t = threading.Thread(target=self.search_word)
         t.start()
         img = CTkImage(Image.open('assets\\spin.gif'))
-        loading = CTkLabel(self, width=200, height=200, text='', font=('Segoe UI', 16), image=img)
+        loading = CTkLabel(self, width=40, height=40, text='', font=('Segoe UI', 16), image=img)
         loading.grid(row=1, column=0, padx=40, pady=30)
         while t.is_alive():
             self.update()
@@ -70,12 +70,12 @@ class App(CTk):
             hear_btn = CTkButton(self, width=50, height=30, text='Listen', image=icon,
                                  command=lambda: self.start_audio_thread(json),
                                  font=('Segoe UI', 16, 'bold'),
-                                 fg_color=('#2CC985', 'lightgreen'))
+                                 fg_color=('lightgreen', '#2CC985'))
             hear_btn.grid(row=0, column=2, pady=20, sticky='e')
             show_api_response = CTkButton(self, width=100, height=30, text='Show API response',
                                           command=lambda: webbrowser.open(url),
                                           font=('Segoe UI', 16, 'bold'),
-                                          fg_color=('#2CC985', 'lightgreen'))
+                                          fg_color=('lightgreen', '#2CC985'))
             show_api_response.grid(row=2, column=0, padx=20, pady=20)
             self.change_app_mode.grid(row=1, column=2)
         except KeyError:
@@ -88,6 +88,7 @@ class App(CTk):
                                           font=('Segoe UI', 16),
                                           scrollbar_button_color=('lightgreen', 'darkgreen'),
                                           scrollbar_button_hover_color=('darkgreen', 'black'))
+        synonyms_textbox.tag_config('sel', background='lightgreen', foreground='black')
         synonyms_textbox.insert('end', 'Synonyms: \n\n')
         for meaning in json[0]['meanings']:
             synonyms_textbox.insert('end', f'As {meaning["partOfSpeech"]}:\n')
@@ -109,8 +110,9 @@ class App(CTk):
     def create_definitions(self, json):
         definitions = CTkTextbox(self, width=260, height=400,
                                      font=('Segoe UI', 16),
-                                     scrollbar_button_color='darkgreen',
-                                     scrollbar_button_hover_color='black')
+                                     scrollbar_button_color=('lightgreen', 'darkgreen'),
+                                     scrollbar_button_hover_color=('darkgreen', 'black'))
+        definitions.tag_config('sel', background='lightgreen', foreground='black')
         definitions.insert('end', 'Definitions: \n\n')
         for defin in json[0]['meanings']:
             definitions.insert('end', f'As {defin["partOfSpeech"]}:\n')
