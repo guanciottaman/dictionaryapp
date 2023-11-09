@@ -5,4 +5,4 @@ How to use the app:
 - Do NOT move the dictionary.exe from its position. Only move the shortcut.
 - Insert a word in the entry and ... enjoy results! As easy as it seems.
 
-If you find any bugs, report them on Discord (Guanciottaman#7217).
+If you find any bugs, report them on Discord (guanciottaman).
